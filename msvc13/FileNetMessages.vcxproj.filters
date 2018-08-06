@@ -16,6 +16,24 @@
     <Filter Include="SourceMod SDK">
       <UniqueIdentifier>{31958233-BB2D-4e41-A8F9-CE8A4684F436}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\BitBuffer">
+      <UniqueIdentifier>{d020c637-8804-45eb-8761-a3015a112f8d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\BitBuffer">
+      <UniqueIdentifier>{940aa5ff-8113-488c-912e-1a891d51abaa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\ProtoDefs">
+      <UniqueIdentifier>{d0c82a92-f4a3-4ef2-bb42-7b499d783f02}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Protobuf">
+      <UniqueIdentifier>{cf832a85-9316-4808-82be-50ef61affcc7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Protobuf">
+      <UniqueIdentifier>{024a796e-78c1-47f0-ae16-bd465318f8f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ProtoDefs">
+      <UniqueIdentifier>{81a6ae62-c28a-4c02-8778-818d4f0b3d0b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\extension.cpp">
@@ -24,20 +42,14 @@
     <ClCompile Include="..\sdk\smsdk_ext.cpp">
       <Filter>SourceMod SDK</Filter>
     </ClCompile>
-    <ClCompile Include="..\clientlistener.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="bitbuf.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="protobuf\netmessages.pb.cc">
+      <Filter>Source Files\ProtoDefs</Filter>
     </ClCompile>
     <ClCompile Include="smn_protobuf.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Protobuf</Filter>
     </ClCompile>
-    <ClCompile Include="protobuf\netmessages.pb.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="protobuf_utils.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="smn_bitbuf.cpp">
+      <Filter>Source Files\BitBuffer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -50,25 +62,28 @@
     <ClInclude Include="..\sdk\smsdk_ext.h">
       <Filter>SourceMod SDK</Filter>
     </ClInclude>
-    <ClInclude Include="..\clientlistener.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="bitbuf.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="UserMessagePBHelpers.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="protobuf_utils.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="CSMBitBuf.h">
+      <Filter>Header Files\BitBuffer</Filter>
     </ClInclude>
     <ClInclude Include="protobuf\netmessages.pb.h">
+      <Filter>Header Files\ProtoDefs</Filter>
+    </ClInclude>
+    <ClInclude Include="UserMessagePBHelpers.h">
+      <Filter>Header Files\Protobuf</Filter>
+    </ClInclude>
+    <ClInclude Include="inetchannel.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CSmProtobuf.h">
+      <Filter>Header Files\BitBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="CSmObject.h">
+      <Filter>Header Files\BitBuffer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="protobuf\netmessages.proto">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\ProtoDefs</Filter>
     </None>
   </ItemGroup>
 </Project>

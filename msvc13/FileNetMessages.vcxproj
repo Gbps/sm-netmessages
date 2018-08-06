@@ -42,7 +42,7 @@
     <ProjectGuid>{F35CF30D-5C8E-4A95-9F8C-E5A80A124432}</ProjectGuid>
     <RootNamespace>sdk</RootNamespace>
     <Keyword>Win32Proj</Keyword>
-    <ProjectName>FileNetMessages</ProjectName>
+    <ProjectName>smnetmessage</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Label="Configuration">
@@ -113,32 +113,32 @@
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release - CS GO|Win32'">false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release - Team Fortress 2|Win32'">
-    <TargetName>filenetmessages.ext.2.tf2</TargetName>
+    <TargetName>smnetmessage.ext.2.tf2</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release - Day of Defeat Source|Win32'">
-    <TargetName>filenetmessages.ext.2.dods</TargetName>
+    <TargetName>smnetmessage.ext.2.dods</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release - Half Life 2 DM|Win32'">
-    <TargetName>filenetmessages.ext.2.hl2dm</TargetName>
+    <TargetName>smnetmessage.ext.2.hl2dm</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release - CSS|Win32'">
-    <TargetName>filenetmessages.ext.2.css</TargetName>
+    <TargetName>smnetmessage.ext.2.css</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release - CS GO|Win32'">
-    <TargetName>filenetmessages.ext.2.csgo</TargetName>
+    <TargetName>smnetmessage.ext.2.csgo</TargetName>
     <PostBuildEventUseInBuild>false</PostBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release - Episode 1|Win32'">
-    <TargetName>filenetmessages.ext.2.ep1</TargetName>
+    <TargetName>smnetmessage.ext.2.ep1</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release - Left 4 Dead|Win32'">
-    <TargetName>filenetmessages.ext.2.l4d</TargetName>
+    <TargetName>smnetmessage.ext.2.l4d</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release - Left 4 Dead 2|Win32'">
-    <TargetName>filenetmessages.ext.2.l4d2</TargetName>
+    <TargetName>smnetmessage.ext.2.l4d2</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release - Orange Box|Win32'">
-    <TargetName>filenetmessages.ext.2.ep2</TargetName>
+    <TargetName>smnetmessage.ext.2.ep2</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release - Orange Box|Win32'">
     <ClCompile>
@@ -172,6 +172,7 @@
       <DataExecutionPrevention>
       </DataExecutionPrevention>
       <TargetMachine>MachineX86</TargetMachine>
+      <AdditionalOptions> /ignore:4204 %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release - Episode 1|Win32'">
@@ -206,6 +207,7 @@
       <DataExecutionPrevention>
       </DataExecutionPrevention>
       <TargetMachine>MachineX86</TargetMachine>
+      <AdditionalOptions> /ignore:4204 %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release - Left 4 Dead|Win32'">
@@ -240,6 +242,7 @@
       <DataExecutionPrevention>
       </DataExecutionPrevention>
       <TargetMachine>MachineX86</TargetMachine>
+      <AdditionalOptions> /ignore:4204 %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release - Team Fortress 2|Win32'">
@@ -275,6 +278,7 @@
       <DataExecutionPrevention>
       </DataExecutionPrevention>
       <TargetMachine>MachineX86</TargetMachine>
+      <AdditionalOptions> /ignore:4204 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PostBuildEvent>
       <Command>copy "$(TargetPath)" "C:\tf2srv\steamapps\common\Team Fortress 2 Dedicated Server\tf\addons\sourcemod\extensions"</Command>
@@ -313,6 +317,7 @@
       <DataExecutionPrevention>
       </DataExecutionPrevention>
       <TargetMachine>MachineX86</TargetMachine>
+      <AdditionalOptions> /ignore:4204 %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release - Half Life 2 DM|Win32'">
@@ -348,6 +353,7 @@
       <DataExecutionPrevention>
       </DataExecutionPrevention>
       <TargetMachine>MachineX86</TargetMachine>
+      <AdditionalOptions> /ignore:4204 %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release - CSS|Win32'">
@@ -383,6 +389,7 @@
       <DataExecutionPrevention>
       </DataExecutionPrevention>
       <TargetMachine>MachineX86</TargetMachine>
+      <AdditionalOptions> /ignore:4204 %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release - Left 4 Dead 2|Win32'">
@@ -417,13 +424,14 @@
       <DataExecutionPrevention>
       </DataExecutionPrevention>
       <TargetMachine>MachineX86</TargetMachine>
+      <AdditionalOptions> /ignore:4204 %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release - CS GO|Win32'">
     <ClCompile>
       <AdditionalOptions>/D SE_EPISODEONE=1 /D SE_DARKMESSIAH=2 /D SE_ORANGEBOX=3 /D SE_BLOODYGOODTIME=4 /D SE_EYE=5 /D SE_CSS=6 /D SE_HL2DM=7 /D SE_DODS=8 /D SE_TF2=9 /D SE_LEFT4DEAD=10 /D SE_NUCLEARDAWN=11 /D SE_LEFT4DEAD2=12 /D SE_ALIENSWARM=13 /D SE_PORTAL2=14 /D SE_CSGO=15 /D SE_DOTA=16</AdditionalOptions>
-      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <AdditionalIncludeDirectories>..;..\sdk;$(SOURCEMOD);$(SOURCEMOD)\public;$(SOURCEMOD)\public\sourcepawn;$(HL2SDKCSGO)\common;$(HL2SDKCSGO)\public;$(HL2SDKCSGO)\public\engine;$(HL2SDKCSGO)\public\game\server;$(HL2SDKCSGO)\public\toolframework;$(HL2SDKCSGO)\public\mathlib;$(HL2SDKCSGO)\public\tier0;$(HL2SDKCSGO)\public\tier1;$(HL2SDKCSGO)\game\shared;$(MMSOURCE)\core;$(MMSOURCE)\core\sourcehook;$(SOURCEMOD)\sourcepawn\include;$(SOURCEMOD)\public\amtl\amtl\;$(SOURCEMOD)\public\amtl\;$(HL2SDKCSGO)\common\protobuf-2.5.0\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
+      <AdditionalIncludeDirectories>..;..\sdk;$(SOURCEMOD);$(SOURCEMOD)\public;$(SOURCEMOD)\public\sourcepawn;$(HL2SDKCSGO)\common;$(HL2SDKCSGO)\public;$(HL2SDKCSGO)\public\engine;$(HL2SDKCSGO)\public\game\server;$(HL2SDKCSGO)\public\toolframework;$(HL2SDKCSGO)\public\mathlib;$(HL2SDKCSGO)\public\tier0;$(HL2SDKCSGO)\public\tier1;$(HL2SDKCSGO)\game\shared;$(MMSOURCE)\core;$(MMSOURCE)\core\sourcehook;$(SOURCEMOD)\sourcepawn\include;$(SOURCEMOD)\public\amtl\amtl\;$(SOURCEMOD)\public\amtl\;$(HL2SDKCSGO)\common\protobuf-2.5.0\src;$(PROJECTDIR)includes\fmt-5.1.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;SDK_EXPORTS;_CRT_SECURE_NO_DEPRECATE;SOURCEMOD_BUILD;SOURCE_ENGINE=15;COMPILER_MSVC;COMPILER_MSVC32;USE_PROTOBUF_USERMESSAGES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
@@ -433,6 +441,7 @@
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <Optimization>Disabled</Optimization>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>BINARY_NAME="\"$(TargetFileName)\"";%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -451,28 +460,28 @@
       <DataExecutionPrevention>
       </DataExecutionPrevention>
       <TargetMachine>MachineX86</TargetMachine>
+      <AdditionalOptions> /ignore:4204 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PostBuildEvent>
       <Command>xcopy.exe /Y "$(OutDir)$(TargetFileName)" "C:\csgosrv\steamapps\common\Counter-Strike Global Offensive Beta - Dedicated Server\csgo\addons\sourcemod\extensions"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\clientlistener.cpp" />
     <ClCompile Include="..\extension.cpp" />
     <ClCompile Include="..\sdk\smsdk_ext.cpp" />
-    <ClCompile Include="bitbuf.cpp" />
+    <ClCompile Include="smn_bitbuf.cpp" />
     <ClCompile Include="protobuf\netmessages.pb.cc" />
-    <ClCompile Include="protobuf_utils.cpp" />
     <ClCompile Include="smn_protobuf.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\clientlistener.h" />
     <ClInclude Include="..\extension.h" />
     <ClInclude Include="..\sdk\smsdk_config.h" />
     <ClInclude Include="..\sdk\smsdk_ext.h" />
-    <ClInclude Include="bitbuf.h" />
+    <ClInclude Include="CSMBitBuf.h" />
+    <ClInclude Include="CSmObject.h" />
+    <ClInclude Include="CSmProtobuf.h" />
+    <ClInclude Include="inetchannel.h" />
     <ClInclude Include="protobuf\netmessages.pb.h" />
-    <ClInclude Include="protobuf_utils.h" />
     <ClInclude Include="UserMessagePBHelpers.h" />
   </ItemGroup>
   <ItemGroup>

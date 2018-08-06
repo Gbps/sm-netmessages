@@ -28,37 +28,191 @@
 *
 * Version: $Id$
 */
+#pragma warning( push )
+#pragma warning( disable : 4005)
 
-#define MAX_SPLITSCREEN_PLAYERS 0
+#define MAX_SPLITSCREEN_PLAYERS 1
 
-#include "UserMessages.h"
 #include "UserMessagePBHelpers.h"
 #include <IHandleSys.h>
+#include "CSmProtobuf.h"
+#include "CSMBitBuf.h"
 
+#pragma warning( pop ) 
 
-HandleType_t g_ProtobufType = NO_HANDLE_TYPE;
+using namespace SourceModNetMessages;
 
 // Assumes pbuf message handle is param 1, gets message as msg
 #define GET_MSG_FROM_HANDLE_OR_ERR()                  \
 	Handle_t hndl = static_cast<Handle_t>(params[1]); \
 	HandleError herr;                                 \
 	HandleSecurity sec;                               \
-	SMProtobufMessage *msg;                           \
+	CSmProtobuf *pmsg;                                 \
 	                                                  \
 	sec.pOwner = NULL;                                \
 	sec.pIdentity = myself->GetIdentity();            \
 	                                                  \
-	if ((herr=handlesys->ReadHandle(hndl, g_ProtobufType, &sec, (void **)&msg)) \
+	if ((herr=handlesys->ReadHandle(hndl, CSmProtobuf::HandleType, &sec, (void **)&pmsg)) \
 		!= HandleError_None)                          \
 	{                                                 \
 		return pCtx->ThrowNativeError("Invalid protobuf message handle %x (error %d)", hndl, herr); \
-	}
+	} \
+	SMProtobufMessage* msg = pmsg->Get();
 
 // Assumes message field name is param 2, gets as strField
 #define GET_FIELD_NAME_OR_ERR()                                           \
 	char *strField;                                                       \
 	pCtx->LocalToString(params[2], &strField);
 
+
+cell_t NM_CreateProtobufMessage(IPluginContext *pContext, const cell_t *params)
+{
+	using namespace google::protobuf;
+
+	char *messageName;
+	pContext->LocalToPhysAddr(params[1], reinterpret_cast<cell_t **>(&messageName));
+
+	// Find the descriptor by name
+	auto* msg_desc =
+		DescriptorPool::generated_pool()
+		->FindMessageTypeByName(messageName);
+
+	if(!msg_desc)
+	{
+		return pContext->ThrowNativeError("Invalid NetMessage name '%s'!", messageName);
+	}
+
+	// Create an instance of the message, unpopulated
+	auto* newMessage = 
+		MessageFactory::generated_factory()
+		->GetPrototype(msg_desc)
+		->New();
+
+	if(!newMessage)
+	{
+		return pContext->ThrowNativeError("Could not create NetMessage '%s'!", messageName);
+	}
+
+	// Create a handle for the new message
+	auto* newMsg = new CSmProtobuf(newMessage);
+	auto outHndl = newMsg->CreateHandle(pContext);
+
+	return outHndl;
+}
+
+int ProtobufNetMessageNameToId(std::string& messageName)
+{
+	using namespace google::protobuf;
+	// Net messages have a name like CNETMsg_NOP
+	// Convert to the Enum name net_NOP then use protobuf reflection to grab the message id
+
+	std::string message;
+	if (messageName.compare(0, 4, "CNET") == 0)
+	{
+		message = "net";
+	}
+	else if (messageName.compare(0, 4, "CCLC") == 0)
+	{
+		message = "clc";
+	}
+	else if (messageName.compare(0, 4, "CSVC") == 0)
+	{
+		message = "svc";
+	}
+	else
+	{
+		return -1;
+	}
+
+	// Grab the position of the first underscore, which is where the prefix must be changed
+	const auto found = messageName.find('_');
+	if(found == std::string::npos)
+	{
+		return -1;
+	}
+
+	// generate the name like net_NOP
+	const auto enumName = message + messageName.substr(found);
+
+	// Look for it in the list of enums
+	const auto enum_desc =
+		DescriptorPool::generated_pool()->FindEnumValueByName(enumName);
+
+	if(!enum_desc)
+	{
+		return -1;
+	}
+
+	// The actual msgId
+	const auto msgId = enum_desc->number();
+
+	return msgId;
+}
+
+cell_t NM_SendProtobufToPlayer(IPluginContext *pContext, const cell_t *params)
+{
+	const auto client = params[2];
+
+	auto nmobj = CSmProtobuf::FromHandle(params[1]);
+	if(!nmobj)
+	{
+		return pContext->ThrowNativeError("Invalid Handle");
+	}
+
+	auto* pNetMessage = nmobj->Get();
+
+	auto pPlayer = playerhelpers->GetGamePlayer(client);
+	if (pPlayer &&  pPlayer->IsInGame() && !pPlayer->IsFakeClient())
+	{
+		auto* pNetChan = static_cast<INetChannel *>(engine->GetPlayerNetInfo(client));
+		if (!pNetChan)
+		{
+			return pContext->ThrowNativeError("Could not get net channel for client.");
+		}
+
+		// Grab the protobuf::Message pointer
+		auto* msg = pNetMessage->GetProtobufMessage();
+
+		// Get the total size of the serialized message
+		auto msgSize = msg->ByteSize();
+
+		// Temp buffers
+		auto msg_buf = std::make_unique<uint8[]>(msgSize);
+
+		// Bitbuffer that will contain everything needed to send the packet
+		auto tempBuf = CSmBitBuf{ msgSize + 8 };
+		auto* bitbuf = tempBuf.Get();
+
+		// Actually works because messages are defined in order in the .proto file
+		auto msg_type_name = msg->GetTypeName();
+		auto msgId = ProtobufNetMessageNameToId(msg_type_name);
+
+		if(msgId == -1)
+		{
+			return pContext->ThrowNativeError("Protobuf %s cannot be sent as it is not a NetMessage (not CSVCMsg, CCLCMsg, or CNETMsg)", msg_type_name.c_str());
+		}
+		// Write the message id number (same in other source games)
+		bitbuf->WriteVarInt32(msgId);
+
+		// Size of the message calculated from protobuf
+		bitbuf->WriteVarInt32(msgSize);
+
+		// Serialize the message to a temp buffer
+		msg->SerializeWithCachedSizesToArray(msg_buf.get());
+
+		// Write the temp buffer back to the bitbuffer
+		bitbuf->WriteBytes(msg_buf.get(), msgSize);
+
+		// Send the packet reliably
+		pNetChan->SendData(*bitbuf, true);
+
+		return true;
+	}
+	else
+	{
+		return pContext->ThrowNativeError("Client %i is invalid!", client);
+	}
+}
 
 static cell_t smn_PbReadInt(IPluginContext *pCtx, const cell_t *params)
 {
@@ -736,7 +890,9 @@ static cell_t smn_PbGetMessage(IPluginContext *pCtx, const cell_t *params)
 		return pCtx->ThrowNativeError("Invalid field \"%s\" for message \"%s\"", strField, msg->GetProtobufMessage()->GetTypeName().c_str());
 	}
 
-	Handle_t outHndl = handlesys->CreateHandle(g_ProtobufType, new SMProtobufMessage(innerMsg), NULL, myself->GetIdentity(), NULL);
+	auto* newMsg = new CSmProtobuf(innerMsg);
+	Handle_t outHndl = newMsg->CreateHandle(pCtx);
+
 	msg->AddChildHandle(outHndl);
 
 	return outHndl;
@@ -754,7 +910,10 @@ static cell_t smn_PbReadRepeatedMessage(IPluginContext *pCtx, const cell_t *para
 		return pCtx->ThrowNativeError("Invalid field \"%s\"[%d] for message \"%s\"", strField, params[3], msg->GetProtobufMessage()->GetTypeName().c_str());
 	}
 
-	Handle_t outHndl = handlesys->CreateHandle(g_ProtobufType, new SMProtobufMessage(const_cast<protobuf::Message *>(innerMsg)), NULL, myself->GetIdentity(), NULL);
+	// HACK: Removed const because blah
+	auto* newMsg = new CSmProtobuf((protobuf::Message*)innerMsg);
+	Handle_t outHndl = newMsg->CreateHandle(pCtx);
+
 	msg->AddChildHandle(outHndl);
 
 	return outHndl;
@@ -770,8 +929,9 @@ static cell_t smn_PbAddMessage(IPluginContext *pCtx, const cell_t *params)
 	{
 		return pCtx->ThrowNativeError("Invalid field \"%s\" for message \"%s\"", strField, msg->GetProtobufMessage()->GetTypeName().c_str());
 	}
+	auto* newMsg = new CSmProtobuf(innerMsg);
+	Handle_t outHndl = newMsg->CreateHandle(pCtx);
 
-	Handle_t outHndl = handlesys->CreateHandle(g_ProtobufType, new SMProtobufMessage(innerMsg), NULL, myself->GetIdentity(), NULL);
 	msg->AddChildHandle(outHndl);
 
 	return outHndl;
@@ -779,7 +939,7 @@ static cell_t smn_PbAddMessage(IPluginContext *pCtx, const cell_t *params)
 
 sp_nativeinfo_t protobuf_natives[] =
 {
-		// Transitional syntax.
+	// Transitional syntax.
 	{ "NM_Protobuf.ReadInt",					smn_PbReadInt },
 	{ "NM_Protobuf.ReadFloat",					smn_PbReadFloat },
 	{ "NM_Protobuf.ReadBool",					smn_PbReadBool },
@@ -810,6 +970,7 @@ sp_nativeinfo_t protobuf_natives[] =
 	{ "NM_Protobuf.GetMessage",				    smn_PbGetMessage },
 	{ "NM_Protobuf.ReadRepeatedMessage",		smn_PbReadRepeatedMessage },
 	{ "NM_Protobuf.AddMessage",					smn_PbAddMessage },
-
+	{ "NM_Protobuf.SendToPlayer",				NM_SendProtobufToPlayer},
+	{ "NM_CreateProtobufMessage",				NM_CreateProtobufMessage },
 	{ NULL,							NULL }
 };

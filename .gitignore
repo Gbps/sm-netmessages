@@ -28,7 +28,7 @@
 *.opensdf
 *.opendb
 *.tmp
-.vc/
+.vs/
 # Builds
 Release*/
 Debug*/

@@ -1,84 +1,8 @@
-#if defined _filenetmessages_included
+#if defined _smnetmessage_included
 	#endinput
 #endif
 
-#define _filenetmessages_included
-
-
-
-/*
- * The natives work quite pretty.
- * But the forwards are really tricky, no idea when they really fire. 
- */
-
-
-/**
- * Called when a file was received from a client to the server.
- * Was fired when requesting a file and it doesn't exist and was succesfulled downloaded.
- *
- * @param client          Client index.
- * @param file            File that was received.
- * @param transferID      transfer ID.
- */
-forward FNM_OnFileReceived(client, const String:file[], transferID);
-
-/**
- * Called when a client requests a file from the server.
- *
- * @param client          Client index.
- * @param file            File that was requested.
- * @param transferID      transfer ID.
- *
- * @return                Plugin_Stop to deny the request, Plugin_Continue otherwise.
- */
-forward Action:FNM_OnFileRequested(client, const String:file[], transferID);
-
-/**
- * Called when a client denies a file request from the server.
- * Was fired when requesting a file, but filed doesn't exist.
- *
- * @param client          Client index.
- * @param file            File that was denied.
- * @param transferID      transfer ID.
- */
-forward FNM_OnFileDenied(client, const String:file[], transferID);
-
-/**
- * Called when a file was sent to a client.
- * Was never fired :/
- *
- * @param client          Client index.
- * @param file            File that was sent.
- * @param transferID      transfer ID.
- */
-forward FNM_OnFileSent(client, const String:file[], transferID);
-
-
-
-
-/**
- * Sends a file to a client
- *
- * @param client          Client to send file.
- * @param file            File to send.
- * @param ...             Variable number of format parameters.
- *
- * @return                TransferID on success, otherwise 0.
- */
-native FNM_SendFile(client, const String:file[], any:...);
-
-
-
-/**
- * Requests a file from a client
- *
- * @param client          Client to get file from.
- * @param file            File to request.
- * @param ...             Variable number of format parameters.
- *
- * @return                TransferID of the request.
- */
-native FNM_RequestFile(client, const String:file[], any:...);
+#define _smnetmessage_included
 
 /**
  * Get a bf_write buffer for a given client.
@@ -88,18 +12,7 @@ native FNM_RequestFile(client, const String:file[], any:...);
  *
  * @return                A handle to a bf_write bit packing structure, or INVALID_HANDLE on failure.
  */
-native NM_BfWrite NM_GetNetChannelWriteBuf(int client, NetMessage msgnum);
-
-/**
- * Send a netmessage packet to a player
- *
- * @param client          Client to send message to.
- * @param buffer          The NM_BfWrite object to send.
- *
- * @return                None
- */
-native NM_SendDataToPlayer(int client, NM_BfWrite buffer);
-
+native NM_BfWrite NM_GetNetChannelBfWrite(int client, NetMessage msgnum);
 
 /**
  * Get a new Protobuf packet object
@@ -109,17 +22,6 @@ native NM_SendDataToPlayer(int client, NM_BfWrite buffer);
  * @return                A handle to a NM_Protobuf, or INVALID_HANDLE on failure.
  */
 native NM_Protobuf NM_CreateProtobufMessage(char[] msgType);
-
-/**
- * Send a netmessage Protobuf to a player
- *
- * @param client          Client to send message to.
- * @param protobuf        The NM_Protobuf object to send.
- *
- * @return                None
- */
-native NM_SendProtobufToPlayer(int client, NM_Protobuf protobuf);
-
 
 methodmap NM_BfWrite < Handle
 {
@@ -204,95 +106,104 @@ methodmap NM_BfWrite < Handle
 	//
 	// @param angles    Angle vector to write.
 	public native void WriteAngles(float angles[3]);
+
+    /**
+    * Send a netmessage packet to a player
+    *
+    * @param client          Client to send message to.
+    *
+    * @return                None
+    */
+    public native void SendToPlayer(int client);
 };
 
-methodmap NM_BfRead < Handle
-{
-	// Reads a single bit from a readable bitbuffer (bf_read).
-	//
-	// @return          Bit value read.
-	public native bool ReadBool();
+// methodmap NM_BfRead < Handle
+// {
+// 	// Reads a single bit from a readable bitbuffer (bf_read).
+// 	//
+// 	// @return          Bit value read.
+// 	public native bool ReadBool();
 
-	// Reads a byte from a readable bitbuffer (bf_read).
-	//
-	// @return          Byte value read (read as 8bit).
-	public native int ReadByte();
+// 	// Reads a byte from a readable bitbuffer (bf_read).
+// 	//
+// 	// @return          Byte value read (read as 8bit).
+// 	public native int ReadByte();
 
-	// Reads a character from a readable bitbuffer (bf_read).
-	//
-	// @return          Character value read.
-	public native int ReadChar();
+// 	// Reads a character from a readable bitbuffer (bf_read).
+// 	//
+// 	// @return          Character value read.
+// 	public native int ReadChar();
 
-	// Reads a 16bit integer from a readable bitbuffer (bf_read).
-	//
-	// @param bf        bf_read handle to read from.
-	// @return          Integer value read (read as 16bit).
-	public native int ReadShort();
+// 	// Reads a 16bit integer from a readable bitbuffer (bf_read).
+// 	//
+// 	// @param bf        bf_read handle to read from.
+// 	// @return          Integer value read (read as 16bit).
+// 	public native int ReadShort();
 
-	// Reads a 16bit unsigned integer from a readable bitbuffer (bf_read).
-	//
-	// @param bf        bf_read handle to read from.
-	// @return          Integer value read (read as 16bit).
-	public native int ReadWord();
+// 	// Reads a 16bit unsigned integer from a readable bitbuffer (bf_read).
+// 	//
+// 	// @param bf        bf_read handle to read from.
+// 	// @return          Integer value read (read as 16bit).
+// 	public native int ReadWord();
 
-	// Reads a normal integer to a readable bitbuffer (bf_read).
-	//
-	// @return          Integer value read (read as 32bit).
-	public native int ReadNum();
+// 	// Reads a normal integer to a readable bitbuffer (bf_read).
+// 	//
+// 	// @return          Integer value read (read as 32bit).
+// 	public native int ReadNum();
 
-	// Reads a floating point number from a readable bitbuffer (bf_read).
-	//
-	// @return          Floating point value read.
-	public native float ReadFloat();
+// 	// Reads a floating point number from a readable bitbuffer (bf_read).
+// 	//
+// 	// @return          Floating point value read.
+// 	public native float ReadFloat();
 
-	// Reads a string from a readable bitbuffer (bf_read).
-	//
-	// @param buffer    Destination string buffer.
-	// @param maxlength Maximum length of output string buffer.
-	// @param line      If true the buffer will be copied until it reaches a '\n' or a null terminator.
-	// @return          Number of bytes written to the buffer.  If the bitbuffer stream overflowed, 
-	//                  that is, had no terminator before the end of the stream, then a negative 
-	//                  number will be returned equal to the number of characters written to the 
-	//                  buffer minus 1.  The buffer will be null terminated regardless of the 
-	//                  return value.
-	public native int ReadString(char[] buffer, int maxlength, bool line=false);
+// 	// Reads a string from a readable bitbuffer (bf_read).
+// 	//
+// 	// @param buffer    Destination string buffer.
+// 	// @param maxlength Maximum length of output string buffer.
+// 	// @param line      If true the buffer will be copied until it reaches a '\n' or a null terminator.
+// 	// @return          Number of bytes written to the buffer.  If the bitbuffer stream overflowed, 
+// 	//                  that is, had no terminator before the end of the stream, then a negative 
+// 	//                  number will be returned equal to the number of characters written to the 
+// 	//                  buffer minus 1.  The buffer will be null terminated regardless of the 
+// 	//                  return value.
+// 	public native int ReadString(char[] buffer, int maxlength, bool line=false);
 
-	// Reads an entity from a readable bitbuffer (bf_read).
-	//
-	// @return          Entity index read.
-	public native int ReadEntity();
+// 	// Reads an entity from a readable bitbuffer (bf_read).
+// 	//
+// 	// @return          Entity index read.
+// 	public native int ReadEntity();
 
-	// Reads a bit angle from a readable bitbuffer (bf_read).
-	//
-	// @param numBits   Optional number of bits to use.
-	// @return          Angle read.
-	public native float ReadAngle(int numBits=8);
+// 	// Reads a bit angle from a readable bitbuffer (bf_read).
+// 	//
+// 	// @param numBits   Optional number of bits to use.
+// 	// @return          Angle read.
+// 	public native float ReadAngle(int numBits=8);
 
-	// Reads a coordinate from a readable bitbuffer (bf_read).
-	//
-	// @return          Coordinate read.
-	public native float ReadCoord();
+// 	// Reads a coordinate from a readable bitbuffer (bf_read).
+// 	//
+// 	// @return          Coordinate read.
+// 	public native float ReadCoord();
 
-	// Reads a 3D vector of coordinates from a readable bitbuffer (bf_read).
-	//
-	// @param coord     Destination coordinate array.
-	public native void ReadVecCoord(float coord[3]);
+// 	// Reads a 3D vector of coordinates from a readable bitbuffer (bf_read).
+// 	//
+// 	// @param coord     Destination coordinate array.
+// 	public native void ReadVecCoord(float coord[3]);
 
-	// Reads a 3D normal vector from a readable bitbuffer (bf_read).
-	//
-	// @param vec       Destination vector array.
-	public native void ReadVecNormal(float vec[3]);
+// 	// Reads a 3D normal vector from a readable bitbuffer (bf_read).
+// 	//
+// 	// @param vec       Destination vector array.
+// 	public native void ReadVecNormal(float vec[3]);
 
-	// Reads a 3D angle vector from a readable bitbuffer (bf_read).
-	//
-	// @param angles    Destination angle vector.
-	public native void ReadAngles(float angles[3]);
+// 	// Reads a 3D angle vector from a readable bitbuffer (bf_read).
+// 	//
+// 	// @param angles    Destination angle vector.
+// 	public native void ReadAngles(float angles[3]);
 
-	// Returns the number of bytes left in a readable bitbuffer (bf_read).
-	property int BytesLeft {
-		public native get();
-	}
-};
+// 	// Returns the number of bytes left in a readable bitbuffer (bf_read).
+// 	property int BytesLeft {
+// 		public native get();
+// 	}
+// };
 
 enum NetMessage
 {
@@ -600,14 +511,24 @@ methodmap NM_Protobuf < Handle
 	// @return           Protobuf handle to added, embedded message.
 	// @error            Non-existent field, or incorrect field type.
 	public native NM_Protobuf AddMessage(const char[] field);
+
+    /**
+    * Send a netmessage Protobuf to a player
+    *
+    * @param client          Client to send message to.
+    *
+    * @return                None
+    */
+    public native void SendToPlayer(int client);
+
 };
 
 
 /** Do Not Edit Below This Line **/
-public Extension:__ext_filenetmessages =
+public Extension:__ext_smnetmessage =
 {
-	name = "filenetmessages",
-	file = "filenetmessages.ext",
+	name = "smnetmessage",
+	file = "smnetmessage.ext",
 
 	#if defined AUTOLOAD_EXTENSIONS
 		autoload = 1,
@@ -621,11 +542,3 @@ public Extension:__ext_filenetmessages =
 		required = 0,
 	#endif
 };
-
-#if !defined REQUIRE_EXTENSIONS
-	public __ext_filenetmessages_SetNTVOptional()
-	{
-		MarkNativeAsOptional("FNM_SendFile");
-		MarkNativeAsOptional("FNM_RequestFile");
-	}
-#endif

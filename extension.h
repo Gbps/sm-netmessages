@@ -30,21 +30,7 @@
 #include <inetchannel.h>
 #include <inetmsghandler.h>
 
-
-
-class BitBufferHandleHandler : public IHandleTypeDispatch
-{
-	virtual bool GetHandleApproxSize(HandleType_t type, void *object, unsigned int *pSize);
-	virtual void OnHandleDestroy(HandleType_t type, void *object);
-};
-
-class ProtobufBufferHandleHandler : public IHandleTypeDispatch
-{
-	virtual bool GetHandleApproxSize(HandleType_t type, void *object, unsigned int *pSize);
-	virtual void OnHandleDestroy(HandleType_t type, void *object);
-};
-
-class FileNetMessagesExtension : public SDKExtension
+class NetMessagesExtension : public SDKExtension
 {
 private:
 public:
@@ -79,8 +65,8 @@ cell_t FileNetMessages_SendFile(IPluginContext *pContext, const cell_t *params);
 cell_t FileNetMessages_RequestFile(IPluginContext *pContext, const cell_t *params);
 cell_t NetMessages_GetNetChannelWriteBuf(IPluginContext *pContext, const cell_t *params);
 cell_t NetMessages_SendDataToPlayer(IPluginContext *pContext, const cell_t *params);
-cell_t NetMessages_CreateProtobufMessage(IPluginContext *pContext, const cell_t *params);
-cell_t NetMessages_SendProtobufToPlayer(IPluginContext *pContext, const cell_t *params);
+cell_t NM_CreateProtobufMessage(IPluginContext *pContext, const cell_t *params);
+cell_t NM_SendProtobufToPlayer(IPluginContext *pContext, const cell_t *params);
 
 
 #endif

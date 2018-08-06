@@ -38,12 +38,12 @@
  */
 
 /* Basic information exposed publicly */
-#define SMEXT_CONF_NAME			"File Net Messages 2"
-#define SMEXT_CONF_DESCRIPTION	"Sending and receiving files via NetMessage, Modified to handle any NetMessage"
+#define SMEXT_CONF_NAME			"SourceMod NetMessages"
+#define SMEXT_CONF_DESCRIPTION	"Provides bindings to send and receive NetMessages"
 #define SMEXT_CONF_VERSION		"0.0.4"
-#define SMEXT_CONF_AUTHOR		"Gbps (orig. dordnung)"
-#define SMEXT_CONF_URL			""
-#define SMEXT_CONF_LOGTAG		"FileNetMessages"
+#define SMEXT_CONF_AUTHOR		"Gbps"
+#define SMEXT_CONF_URL			"https://ctf.re/"
+#define SMEXT_CONF_LOGTAG		"SMNetMessages"
 #define SMEXT_CONF_LICENSE		"GPL"
 #define SMEXT_CONF_DATESTRING	__DATE__
 
